@@ -1,4 +1,5 @@
-import pygame, random 
+import pygame, random, sys
+from pygame.locals import *
 
 pygame.init() 
 
@@ -45,18 +46,39 @@ def move_fish():
 
   #if fish_rect.left <= 0 or fish_rect.right > screen_info.current_w:
 
+#click
+#button PRESS 
+#hover 
 
 
 
+#main game loop
 def main():
   while True: 
     clock.tick(60)
+
+    for event in pygame.event.get():
+      if event.type==QUIT:
+        sys.exit()
+      #if event.type==MOUSEBUTTONDOWN:
+        #speed[1]=0 
+        #speed[0]=0
+      if event.type==KEYDOWN: 
+        if event.key==K_s: 
+          speed[1]=0
+          speed[0]=0
+        if event.key==K_g: 
+          speed[1]=15
+          speed[0]=0
+
+
+
     move_fish()
     screen.fill(color)
     screen.blit(fish_image,fish_rect)
     pygame.display.flip()
 
-
+#necessary code 
 if __name__ == '__main__':
   main()
 
