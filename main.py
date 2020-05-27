@@ -1,5 +1,6 @@
 import pygame, random, sys
 from pygame.locals import *
+from fish import *
 
 pygame.init() 
 
@@ -23,6 +24,8 @@ color=(153,204,7)
 screen=pygame.display.set_mode(screen_size)
 
 fish_image=pygame.transform.rotate(fish_image,180-rotation)
+
+current_fishes=[]
 
 #define what happens when we move the fish
 def move_fish():
@@ -54,15 +57,18 @@ def move_fish():
 
 #main game loop
 def main():
+  for i in range(10):
+        current_fishes.append(Fish(width/2))
   while True: 
     clock.tick(60)
 
     for event in pygame.event.get():
       if event.type==QUIT:
         sys.exit()
-      #if event.type==MOUSEBUTTONDOWN:
-        #speed[1]=0 
-        #speed[0]=0
+      if event.type==MOUSEBUTTONDOWN:
+          current_fishes.append(Fish(event.pos))
+
+
       if event.type==KEYDOWN: 
         if event.key==K_s: 
           speed[1]=0
@@ -74,6 +80,10 @@ def main():
 
 
     move_fish()
+    for fish in fishes:
+            fish.update()
+    for fish in fishes:
+            fish.draw(screen)
     screen.fill(color)
     screen.blit(fish_image,fish_rect)
     pygame.display.flip()
