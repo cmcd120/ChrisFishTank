@@ -1,18 +1,16 @@
 import pygame, random
 
-class Fish(pygame.sprite.Sprite):
+
+class Pacman(pygame.sprite.Sprite):
+
     def __init__(self, pos):
         super().__init__()
-        self.image = pygame.image.load("fish.png")
-        scale = random.randint(1, 5)*10
-        self.image = pygame.transform.smoothscale(self.image, (scale, scale))
+        self.image = pygame.image.load('pacman.png')
+        self.image = pygame.transform.smoothscale(self.image, (40, 40))
+        
         self.rect = self.image.get_rect()
         self.rect.center = pos
-        self.speed = pygame.math.Vector2(0, random.randint(2, 5))
-
-        rotation = random.randint(0, 360)
-        self.speed.rotate_ip(rotation)
-        self.image = pygame.transform.rotate(self.image, 180 - rotation)
+        self.speed = pygame.math.Vector2(0, 0)
 
     def update(self):
         screen_info = pygame.display.Info()
@@ -26,5 +24,8 @@ class Fish(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, False, True)
             self.rect.move_ip(0, self.speed[1])
 
-    def draw(self, screen):
-        screen.blit(self.image, self.rect)
+    def checkReset(self, endPos):
+        return self.rect.center[0] > endPos
+
+    def reset(self, pos):
+        self.rect.center = pos

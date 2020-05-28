@@ -1,96 +1,79 @@
-import pygame, random, sys
+import sys, pygame
 from pygame.locals import *
 from fish import *
+from pacman import *
 
-pygame.init() 
+pygame.init()
 
-screen_info=pygame.display.Info()
+screen_info = pygame.display.Info()
+screen_size = (screen_info.current_w, screen_info.current_h)
 
-screen_size=(width,height)=(screen_info.current_w, screen_info.current_h) 
+size = (width, height) = (850, 480)
+screen = pygame.display.set_mode(size)
+clock = pygame.time.Clock()
 
-#Clock to set frame rate 
-clock=pygame.time.Clock()
+color = (0, 127, 255)
+textColor=(50,254,30)
+txtBackgroundColor=(94,0,4)
+fishes = pygame.sprite.Group()
 
-fish_image=pygame.image.load("fish.png")
-fish_image=pygame.transform.smoothscale(fish_image,(100,100))
-fish_rect=fish_image.get_rect()
-fish_rect.center=(width//2,height//2)
+Player=Pacman((150,150))
 
-#variables to move fish
-speed=pygame.math.Vector2(30,5)
-rotation=random.randint(0,360)
-speed.rotate_ip(rotation)
-color=(153,204,7) 
-screen=pygame.display.set_mode(screen_size)
-
-fish_image=pygame.transform.rotate(fish_image,180-rotation)
-
-current_fishes=[]
-
-#define what happens when we move the fish
-def move_fish():
-  global fish_image 
-  screen_info=pygame.display.Info() 
-  fish_rect.move_ip(speed)  
+font=pygame.font.Font('freesansbold.ttf',32)
+text=font.render("Hello",True,textColor,txtBackgroundColor)
+textRect = text.get_rect()
+textRect.center = (width // 2, height // 2)  
 
 
-  #if fish hits top or bottom
-  if fish_rect.top < 0 or fish_rect.bottom > screen_info.current_h:
-    speed[1] *= -1
-    fish_rect.move_ip(0, speed[1])
-    fish_image=pygame.transform.flip(fish_image, True, False)
-
- #if fish hits left or right
-  if fish_rect.left < 0 or fish_rect.right > screen_info. current_w:
-    speed[0] *= -1
-    fish_rect.move_ip(speed[0], 0) 
-    fish_image=pygame.transform.flip(fish_image, False, True)
-
-
-  #if fish_rect.left <= 0 or fish_rect.right > screen_info.current_w:
-
-#click
-#button PRESS 
-#hover 
-
-
-
-#main game loop
 def main():
-  for i in range(10):
-        current_fishes.append(Fish(width/2))
-  while True: 
-    clock.tick(60)
-
-    for event in pygame.event.get():
-      if event.type==QUIT:
-        sys.exit()
-      if event.type==MOUSEBUTTONDOWN:
-          current_fishes.append(Fish(event.pos))
-
-
-      if event.type==KEYDOWN: 
-        if event.key==K_s: 
-          speed[1]=0
-          speed[0]=0
-        if event.key==K_g: 
-          speed[1]=15
-          speed[0]=0
-
-
-
-    move_fish()
-    for fish in fishes:
+    for i in range(10):
+        fishes.add(Fish((width / 2, height / 2)))
+    while True:
+        clock.tick(60)
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                sys.exit()
+            if event.type == MOUSEBUTTONDOWN:
+                fishes.add(Fish(event.pos))
+            if event.type == KEYUP:
+                if event.key == K_UP:
+                  Player.speed[1]=0 
+                if event.key == K_DOWN:
+                  Player.speed[1]=0  
+                if event.key==K_LEFT:
+                  Player.speed[0]=0
+                if event.key==K_RIGHT:
+                  Player.speed[0]=0
+            if event.type == KEYDOWN:
+                if event.key == K_UP:
+                  Player.speed[1]=-10 
+                if event.key == K_DOWN:
+                  Player.speed[1]=10  
+                if event.key==K_LEFT:
+                  Player.speed[0]=-10
+                if event.key==K_RIGHT:
+                  Player.speed[0]=10
+                
+                
+                if event.key == K_d:
+                    for i in range(len(fishes) // 2):
+                        fishes.pop(0)
+                if event.key == K_f:
+                    pygame.display.set_mode(screen_size, FULLSCREEN)
+                if event.key == K_ESCAPE:
+                    pygame.display.set_mode(size)
+        screen.fill(color)
+        for fish in fishes:
             fish.update()
-    for fish in fishes:
+        for fish in fishes:
             fish.draw(screen)
-    screen.fill(color)
-    screen.blit(fish_image,fish_rect)
-    pygame.display.flip()
+        Player.update()
+        get_hit=pygame.sprite.spritecollide(Player,fishes, False) 
+        screen.blit(Player.image,Player.rect)
+        if get_hit:
+          screen.blit(text,textRect)
+        pygame.display.flip()
 
-#necessary code 
+
 if __name__ == '__main__':
-  main()
-
-#print(screen_info.current_w)
-#print(screen_info.current_h)
+    main()
